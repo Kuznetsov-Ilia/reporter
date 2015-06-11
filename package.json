@@ -1,0 +1,17 @@
+{
+  "name": "reporter",
+  "version": "0.0.0",
+  "description": "reporter",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/QiV/reporter"
+  },
+  "keywords": [],
+  "author": "killxxxvi@mail.ru",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/QiV/reporter/issues"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}
