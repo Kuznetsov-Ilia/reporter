@@ -1,21 +1,24 @@
 import PERF from './perf';
 import SEND from './sender';
 import {extend} from 'misc/utils';
-export default class Reporter {
-  constructor (LOGGER, TRANSFORM){
-    this.LOGGER = LOGGER;
-    this.TIMERS_DATA = {};
-    this.DATA = {};
-    this.TRANSFORM = TRANSFORM;
-  }
 
+export default Reporter;
+
+function Reporter(LOGGER, TRANSFORM) {
+  this.LOGGER = LOGGER;
+  this.TIMERS_DATA = {};
+  this.DATA = {};
+  this.TRANSFORM = TRANSFORM;
+}
+
+extend(Reporter.prototype, {
   start(args) {
     var markName = ['start', args.t, args.n, args.id].join('-');
     PERF.mark(markName);
     args.start = markName;
     this.TIMERS_DATA[markName] = args;
     return this.TIMERS_DATA[markName];
-  }
+  },
 
   end(args) {
     var token = [args.t, args.n, args.id].join('-');
@@ -37,7 +40,7 @@ export default class Reporter {
     data = null;
     delete this.TIMERS_DATA[markNameStart];
     return this;
-  }
+  },
 
   send(data) {
     if (data) {
@@ -53,7 +56,7 @@ export default class Reporter {
     SEND(this.TRANSFORM.get(this.DATA));
     this.clear();
     return this;
-  }
+  },
 
   log(data) {
     if (data) {
@@ -69,28 +72,28 @@ export default class Reporter {
     this.clear();
     // do logger magick
     return this;
-  }
+  },
 
   clear() {
     this.DATA = null;
     return this;
-  }
+  },
 
   clearMarks(marks) {
     if (marks && marks.length) {
       marks.forEach(PERF.clearMarks.bind(PERF));
     }
-  }
+  },
 
   markExists(markName) {
     var entryPoint = PERF.getEntriesByName(markName, 'mark');
     return entryPoint && entryPoint.length > 0;
-  }
+  },
 
   getMeasure(measureName) {
     var measure = PERF.getEntriesByName(measureName, 'measure');
     return measure[0] && measure[0].duration;
-  }
+  },
 
   getDuration(startMarkName, stopMarkName) {
     if (this.markExists(startMarkName)) {
@@ -111,9 +114,9 @@ export default class Reporter {
     } else {
       return false;
     }
-  }
+  },
 
   mark(markName) {
     PERF.mark(markName);
   }
-}
+});

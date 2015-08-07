@@ -1,4 +1,5 @@
-var api = {}
+import window from 'global';
+var api = {};
 if (window.performance && window.performance.timing) {
   var TIMING = window.performance.timing;
   // All times are relative times to the start time within the

@@ -1,11 +1,13 @@
-import {isObject, isString, isArray} from 'misc/utils';
-export default class Radar {
-  constructor (project, host, customTransform) {
-    this.project = project;
-    this.host = host;
-    this.customTransform = customTransform;
-  }
+import {isObject, isString, isArray, extend} from 'misc/utils';
 
+export default Radar;
+
+function Radar (project, host, customTransform) {
+  this.project = project;
+  this.host = host;
+  this.customTransform = customTransform;
+}
+extend(Radar.prototype, {
   get (input) {
     var data = {};
     data.p = input.p || this.project;
@@ -49,7 +51,7 @@ export default class Radar {
       data: data
     };
   }
-}
+});
 
 function encode (value, key) {
   if (isObject(value)) {

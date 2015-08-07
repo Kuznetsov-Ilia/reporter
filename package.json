@@ -4,14 +4,25 @@
   "description": "reporter",
   "repository": {
     "type": "git",
-    "url": "https://github.com/QiV/reporter"
+    "url": "git+https://github.com/QiV/reporter.git"
   },
   "keywords": [],
-  "author": "killxxxvi@mail.ru",
+  "author": {
+    "name": "killxxxvi@mail.ru"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/QiV/reporter/issues"
   },
   "devDependencies": {},
-  "dependencies": {}
+  "dependencies": {
+    "global": "git+https://github.com/QiV/global.git#master"
+  },
+  "gitHead": "2278feb8d679471efe82a767a50148c9f84ed30f",
+  "readme": "ERROR: No README data found!",
+  "homepage": "https://github.com/QiV/reporter#readme",
+  "browserify": {
+    "transform": ["babelify"]
+  }
+
 }

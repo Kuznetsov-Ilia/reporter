@@ -8,7 +8,7 @@ export default function (_LOG, keys) {
   keys.forEach(function(key){
 
   })*/
-  document.on('keydown', keyDownHandler);
+ // document.on('keydown', keyDownHandler);
 }
 
 function keyDownHandler (e) {

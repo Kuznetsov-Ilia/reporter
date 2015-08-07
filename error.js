@@ -1,4 +1,4 @@
-import REPORTER from './index';
+import window from 'global';
 import {isArray} from 'misc/utils';
 // grep -v 'Permission denied to access property' fuckup-in-debugger.log | grep -v 'Недостаточно памяти' | grep -v 'Uncaught illegal access' | grep -v 'out of memory' | less
 var isNotValid = function(value) {
@@ -7,11 +7,12 @@ var isNotValid = function(value) {
     ].indexOf(value) !== -1;
 };
 var internalFileNamePattern;
-
 var errMap;
-export default function(_internalFileNamePattern, _errMap) {
-  internalFileNamePattern = _internalFileNamePattern;
-  errMap = _errMap;
+var REPORTER;
+export default function(args) {
+  internalFileNamePattern = args.internalFileNamePattern;
+  errMap = args.errMap;
+  REPORTER = args.REPORTER;
   window.onerror = onerrorHandler;
 }
 

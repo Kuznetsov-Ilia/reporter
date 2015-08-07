@@ -1,10 +1,8 @@
-"use strict";
+//"use strict";
 
 //https://gist.github.com/RubaXa/8662836#file-performance-js
 // allow running in Node.js environment
-if (typeof window === "undefined") {
-  window = {};
-}
+import window from 'global';
 
 var _PERF = window.performance || {};
 

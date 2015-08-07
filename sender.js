@@ -1,3 +1,4 @@
+import navigator from 'global';
 import {isObject} from 'misc/utils';
 
 var SEND = 'sendBeacon' in navigator ?

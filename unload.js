@@ -1,19 +1,22 @@
+import window from 'global';
 import PERF from './perf';
-import {noop} from 'misc/utils';
-export default class unloadHandler {
-  consctructor(handler, REPORTER) {
-    this.handler = handler;
-    this.REPORTER = REPORTER;
-  }
+import {noop, extend} from 'misc/utils';
+export default unloadHandler;
 
+function unloadHandler (handler, REPORTER) {
+  this.handler = handler;
+  this.REPORTER = REPORTER;
+}
+
+extend(unloadHandler.prototype, {
   start () {
     this.prevOnbeforeunload = window.onbeforeunload || noop;
     window.onbeforeunload = sendStatisticsBeforeUnload(this.REPORTER, this.handler);
-  }
+  },
   stop () {
     window.onbeforeunload = this.prevOnbeforeunload;
   }
-}
+});
 
 function sendStatisticsBeforeUnload (REPORTER, namesHandler) {
   return function (){
