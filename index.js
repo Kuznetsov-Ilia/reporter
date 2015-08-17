@@ -1,37 +1,50 @@
-import PERF from './perf';
-import SEND from './sender';
-import {extend} from 'misc/utils';
+'use strict';
 
-export default Reporter;
+exports.__esModule = true;
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _perf = require('./perf');
+
+var _perf2 = _interopRequireDefault(_perf);
+
+var _sender = require('./sender');
+
+var _sender2 = _interopRequireDefault(_sender);
+
+var _miscUtils = require('misc/utils');
+
+exports['default'] = Reporter;
 
 function Reporter(LOGGER, TRANSFORM) {
   this.LOGGER = LOGGER;
   this.TIMERS_DATA = {};
   this.DATA = {};
   this.TRANSFORM = TRANSFORM;
+  this.MEASURES = {};
 }
 
-extend(Reporter.prototype, {
-  start(args) {
+_miscUtils.extend(Reporter.prototype, {
+  start: function start(args) {
     var markName = ['start', args.t, args.n, args.id].join('-');
-    PERF.mark(markName);
+    _perf2['default'].mark(markName);
     args.start = markName;
     this.TIMERS_DATA[markName] = args;
     return this.TIMERS_DATA[markName];
   },
 
-  end(args) {
+  end: function end(args) {
     var token = [args.t, args.n, args.id].join('-');
     var markNameStart = 'start-' + token;
     var measureName = 'measure-' + token;
     var markNameEnd = 'end-' + token;
     if (this.markExists(markNameStart)) {
-      PERF.mark(markNameEnd);
-      PERF.measure(measureName, markNameStart, markNameEnd);
+      _perf2['default'].mark(markNameEnd);
+      _perf2['default'].measure(measureName, markNameStart, markNameEnd);
     }
     var data = this.TIMERS_DATA[markNameStart] || {};
     var duration = this.getMeasure(measureName);
-    extend(data, {
+    _miscUtils.extend(data, {
       end: markNameEnd,
       duration: duration
     });
@@ -42,30 +55,32 @@ extend(Reporter.prototype, {
     return this;
   },
 
-  send(data) {
+  send: function send(data) {
     if (data) {
       if (this.DATA) {
-        extend(this.DATA, data);
+        _miscUtils.extend(this.DATA, data);
       } else {
         this.DATA = data;
       }
-    } else if (!this.DATA) { // nothing to send
+    } else if (!this.DATA) {
+      // nothing to send
       return this;
     }
     this.LOGGER.set(this.DATA);
-    SEND(this.TRANSFORM.get(this.DATA));
+    _sender2['default'](this.TRANSFORM.get(this.DATA));
     this.clear();
     return this;
   },
 
-  log(data) {
+  log: function log(data) {
     if (data) {
       if (this.DATA) {
-        extend(this.DATA, data);
+        _miscUtils.extend(this.DATA, data);
       } else {
         this.DATA = data;
       }
-    } else if (!this.DATA) { // nothing to send
+    } else if (!this.DATA) {
+      // nothing to send
       return this;
     }
     this.LOGGER.set(this.DATA);
@@ -74,49 +89,88 @@ extend(Reporter.prototype, {
     return this;
   },
 
-  clear() {
+  clear: function clear() {
     this.DATA = null;
     return this;
   },
 
-  clearMarks(marks) {
+  clearMarks: function clearMarks(marks) {
     if (marks && marks.length) {
-      marks.forEach(PERF.clearMarks.bind(PERF));
+      marks.forEach(_perf2['default'].clearMarks.bind(_perf2['default']));
     }
   },
 
-  markExists(markName) {
-    var entryPoint = PERF.getEntriesByName(markName, 'mark');
+  markExists: function markExists(markName) {
+    var entryPoint = _perf2['default'].getEntriesByName(markName, 'mark');
     return entryPoint && entryPoint.length > 0;
   },
 
-  getMeasure(measureName) {
-    var measure = PERF.getEntriesByName(measureName, 'measure');
+  getMeasure: function getMeasure(measureName) {
+    var measure = _perf2['default'].getEntriesByName(measureName, 'measure');
     return measure[0] && measure[0].duration;
   },
 
-  getDuration(startMarkName, stopMarkName) {
+  getMeasures: function getMeasures(measureGroupName) {
+    var mg = this.MEASURES[measureGroupName];
+    mg.name.filter(function (n) {
+      return mg.start.indexOf(n) !== -1 && mg.end.indexOf(n) !== -1;
+    })
+    //.forEach(n => PERF.measure(n, [measureGroupName, n, 'start'].join('-'), [measureGroupName, n, 'end'].join('-')));
+    .forEach(function (n) {
+      _perf2['default'].measure(n, [measureGroupName, n, 'start'].join('-'), [measureGroupName, n, 'end'].join('-'));
+    });
+
+    return _perf2['default'].getEntriesByType('measure').filter(function (m) {
+      return mg.name.indexOf(m.name) !== -1;
+    }).map(function (m) {
+      return {
+        k: m.name,
+        v: Math.round(m.duration * 1000) / 1000
+      };
+    });
+  },
+
+  getDuration: function getDuration(startMarkName, stopMarkName) {
     if (this.markExists(startMarkName)) {
       stopMarkName = stopMarkName || 'tmpStopMarkName';
       var measureName = ['tmpMeasure', startMarkName, stopMarkName].join('-');
       if (stopMarkName === 'tmpStopMarkName') {
-        PERF.mark(stopMarkName);
+        _perf2['default'].mark(stopMarkName);
       } else if (!this.markExists(stopMarkName)) {
         return false;
       }
-      PERF.measure(measureName, startMarkName, stopMarkName);
-      var measure = PERF.getEntriesByName(measureName, 'measure');
+      _perf2['default'].measure(measureName, startMarkName, stopMarkName);
+      var measure = _perf2['default'].getEntriesByName(measureName, 'measure');
       var duration = measure[0] && Math.round(measure[0].duration * 1000) / 1000;
-      PERF.clearMarks(startMarkName);
-      PERF.clearMarks(stopMarkName);
-      PERF.clearMeasures(measureName);
+      _perf2['default'].clearMarks(startMarkName);
+      _perf2['default'].clearMarks(stopMarkName);
+      _perf2['default'].clearMeasures(measureName);
       return duration;
     } else {
       return false;
     }
   },
 
-  mark(markName) {
-    PERF.mark(markName);
+  mark: function mark(markGroup, markName, markType) {
+    if (markType) {
+      if (['start', 'end'].indexOf(markType) === -1) {
+        return console.error('unknown mark type', markType);
+      }
+      var mName = [markGroup, markName, markType].join('-');
+      _perf2['default'].mark(mName);
+      this.MEASURES[markGroup] = this.MEASURES[markGroup] || { name: [], start: [], end: [] };
+      var mg = this.MEASURES[markGroup];
+
+      if (mg.name.indexOf(markName) === -1) {
+        mg.name.push(markName);
+      }
+      if (mg[markType].indexOf(markName) === -1) {
+        mg[markType].push(markName);
+      }
+    } else {
+      markName = markGroup;
+      _perf2['default'].mark(markName);
+    }
   }
 });
+module.exports = exports['default'];

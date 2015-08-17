@@ -1,18 +1,11 @@
-'use strict';
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-var _global = require('global');
-
-var _global2 = _interopRequireDefault(_global);
-
-var api = { stillLoading: 1 };
-if (_global2['default'].performance && _global2['default'].performance.timing) {
-  var TIMING = _global2['default'].performance.timing;
+import window from 'global';
+var api = {stillLoading: 1};
+if (window.performance && window.performance.timing) {
+  var TIMING = window.performance.timing;
   // All times are relative times to the start time within the
   // same objects
   var firstPaint = 0;
-  var CHROME = _global2['default'].chrome;
+  var CHROME = window.chrome;
 
   if (TIMING.loadEventEnd - TIMING.navigationStart < 0) {
     //Page is still loading - please try again when page is loaded
@@ -26,12 +19,12 @@ if (_global2['default'].performance && _global2['default'].performance.timing) {
     var loadTimes = CHROME.loadTimes();
     // Convert to ms
     firstPaint = loadTimes.firstPaintTime * 1000;
-    api.firstPaintTime = firstPaint - loadTimes.startLoadTime * 1000;
+    api.firstPaintTime = firstPaint - (loadTimes.startLoadTime * 1000);
   }
   // IE
   else if (typeof TIMING.msFirstPaint === 'number') {
-      api.firstPaintTime = TIMING.msFirstPaint - TIMING.navigationStart;
-    }
+    api.firstPaintTime = TIMING.msFirstPaint - TIMING.navigationStart;
+  }
   // Firefox
   // This will use the first times after MozAfterPaint fires
   /*else if (TIMING.navigationStart && typeof InstallTrigger !== 'undefined') {

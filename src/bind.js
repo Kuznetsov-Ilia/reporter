@@ -1,20 +1,17 @@
-'use strict';
-
-exports.__esModule = true;
 var logKeys = [0, 0, 0, 0];
 var kombos;
 var LOG;
-
-exports['default'] = function (_LOG, keys) {
+export default function (_LOG, keys) {
   kombos = keys;
   LOG = _LOG;
   /*kombo.push(keys.join(''));
   keys.forEach(function(key){
-   })*/
-  // document.on('keydown', keyDownHandler);
-};
 
-function keyDownHandler(e) {
+  })*/
+ // document.on('keydown', keyDownHandler);
+}
+
+function keyDownHandler (e) {
   logKeys.shift();
   logKeys.push(e.which);
   setTimeout(function () {
@@ -26,4 +23,3 @@ function keyDownHandler(e) {
     LOG.show();
   }
 }
-module.exports = exports['default'];

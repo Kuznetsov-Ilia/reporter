@@ -1,41 +1,52 @@
-import window from 'global';
-import PERF from './perf';
-import {noop, extend} from 'misc/utils';
-export default unloadHandler;
+'use strict';
 
-function unloadHandler (handler, REPORTER) {
+exports.__esModule = true;
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _global = require('global');
+
+var _global2 = _interopRequireDefault(_global);
+
+var _perf = require('./perf');
+
+var _perf2 = _interopRequireDefault(_perf);
+
+var _miscUtils = require('misc/utils');
+
+exports['default'] = unloadHandler;
+
+function unloadHandler(handler, REPORTER) {
   this.handler = handler;
   this.REPORTER = REPORTER;
 }
 
-extend(unloadHandler.prototype, {
-  start () {
-    this.prevOnbeforeunload = window.onbeforeunload || noop;
-    window.onbeforeunload = sendStatisticsBeforeUnload(this.REPORTER, this.handler);
+_miscUtils.extend(unloadHandler.prototype, {
+  start: function start() {
+    this.prevOnbeforeunload = _global2['default'].onbeforeunload || _miscUtils.noop;
+    _global2['default'].onbeforeunload = sendStatisticsBeforeUnload(this.REPORTER, this.handler);
   },
-  stop () {
-    window.onbeforeunload = this.prevOnbeforeunload;
+  stop: function stop() {
+    _global2['default'].onbeforeunload = this.prevOnbeforeunload;
   }
 });
 
-function sendStatisticsBeforeUnload (REPORTER, namesHandler) {
-  return function (){
+function sendStatisticsBeforeUnload(REPORTER, namesHandler) {
+  return function () {
     var names = {
       api: {},
       css: {},
       js: {}
     };
-    PERF.getEntriesByType('resource')
-      .filter(selfHostOnly)
-      .reduce(namesHandler, names)
-      .map(convertToRadar)
-      .forEach(REPORTER.send.bind(REPORTER));
+    _perf2['default'].getEntriesByType('resource').filter(selfHostOnly).reduce(namesHandler, names).map(convertToRadar).forEach(REPORTER.send.bind(REPORTER));
   };
 }
 
 function convertToRadar(type, typeName) {
-  var n = type.map(function(domainVals, domainName) {
-    var sum = domainVals.reduce((_sum, val) => _sum + val, 0);
+  var n = type.map(function (domainVals, domainName) {
+    var sum = domainVals.reduce(function (_sum, val) {
+      return _sum + val;
+    }, 0);
     return {
       k: domainName,
       v: Math.round(sum / domainVals.length)
@@ -70,3 +81,4 @@ function selfHostOnly(r) {
     return [rns, duration];
   }
 }
+module.exports = exports['default'];

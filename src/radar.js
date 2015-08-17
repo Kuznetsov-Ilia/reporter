@@ -1,18 +1,14 @@
-'use strict';
+import {isObject, isString, isArray, extend} from 'misc/utils';
 
-exports.__esModule = true;
+export default Radar;
 
-var _miscUtils = require('misc/utils');
-
-exports['default'] = Radar;
-
-function Radar(project, host, customTransform) {
+function Radar (project, host, customTransform) {
   this.project = project;
   this.host = host;
   this.customTransform = customTransform;
 }
-_miscUtils.extend(Radar.prototype, {
-  get: function get(input) {
+extend(Radar.prototype, {
+  get (input) {
     var data = {};
     data.p = input.p || this.project;
     data.t = input.t || '';
@@ -20,9 +16,9 @@ _miscUtils.extend(Radar.prototype, {
 
     if (input.n) {
       var i = input.n;
-      if (_miscUtils.isString(i)) {
+      if (isString(i)) {
         i += ':1';
-      } else if (_miscUtils.isArray(i) && !_miscUtils.isObject(i[0])) {
+      } else if (isArray(i) && !isObject(i[0])) {
         i = i.join(':1,') + ':1';
       } else {
         i = i.map(encode).join(',');
@@ -36,11 +32,11 @@ _miscUtils.extend(Radar.prototype, {
         msg.push(data.i);
       }
       if (input.d) {
-        if (_miscUtils.isObject(input.d)) {
+        if (isObject(input.d)) {
           msg.push(JSON.stringify(input.d));
-        } else if (_miscUtils.isString(input.d)) {
+        } else if (isString(input.d)) {
           msg.push(input.d);
-        } else if (_miscUtils.isArray(input.d)) {
+        } else if(isArray(input.d)) {
           msg.push(input.d.join(','));
         }
         data.rlog_message = msg;
@@ -57,8 +53,8 @@ _miscUtils.extend(Radar.prototype, {
   }
 });
 
-function encode(value, key) {
-  if (_miscUtils.isObject(value)) {
+function encode (value, key) {
+  if (isObject(value)) {
     var _v = value.v;
     var _k = value.k;
     return _k + ':' + encodeURIComponent(_v);
@@ -66,4 +62,3 @@ function encode(value, key) {
     return key + ':' + encodeURIComponent(value);
   }
 }
-module.exports = exports['default'];

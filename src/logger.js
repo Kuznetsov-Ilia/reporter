@@ -1,39 +1,27 @@
-'use strict';
-
-exports.__esModule = true;
-exports['default'] = myAwsomelogger;
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-var _global = require('global');
-
-var _global2 = _interopRequireDefault(_global);
-
-var _miscUtils = require('misc/utils');
-
-function myAwsomelogger() {
+import window from 'global';
+import {extend, isNode} from 'misc/utils';
+export default function myAwsomelogger() {
   this.log = [];
   this.max = 999;
 }
-
-myAwsomelogger.prototype.set = function (input) {
+myAwsomelogger.prototype.set = function(input) {
   if (this.log.length > 999) {
     this.clear();
   }
-  var data = _miscUtils.extend({}, input, {
+  var data = extend({}, input, {
     date: Math.round(Date.now())
   });
   data.d = logAny(input.d, 2);
   this.log.push(data);
 };
-myAwsomelogger.prototype.clear = function () {
+myAwsomelogger.prototype.clear = function() {
   this.log.shift();
 };
-myAwsomelogger.prototype.show = function () {
+myAwsomelogger.prototype.show = function(){
   var strUrl = '/debugger.html';
   var winName = 'debugger'; /*+ Math.random()*/;
   var logs = dddddd(this.log);
-  var wdegugger = _global2['default'].open(strUrl, winName);
+  var wdegugger = window.open(strUrl, winName);
   setTimeout(sendLogs, 300);
   function sendLogs() {
     if (wdegugger) {
@@ -47,7 +35,7 @@ myAwsomelogger.prototype.show = function () {
 function dddddd(logs) {
   var parsedLog = [];
   var map = {};
-  logs.forEach(function (log) {
+  logs.forEach(function(log) {
     if (log.id) {
       map[log.id] = map[log.id] || [];
       map[log.id].push(log);
@@ -60,14 +48,14 @@ function dddddd(logs) {
       });
     }
   });
-  map.forEach(function (views) {
+  map.forEach(function(views){
     var dates = {};
     var max = views[0].date;
-    views.forEach(function (view) {
+    views.forEach(function(view){
       dates[view.t] = view.date;
       max = Math.max(max, view.date);
     });
-    var data = _miscUtils.extend(dates, {
+    var data = extend(dates, {
       entity: views[0].d.entity,
       id: views[0].id
     });
@@ -79,9 +67,7 @@ function dddddd(logs) {
       end: max
     });
   });
-  parsedLog.sort(function (a, b) {
-    return a.date - b.date;
-  });
+  parsedLog.sort((a, b) => a.date - b.date);
   return parsedLog;
 }
 
@@ -96,17 +82,17 @@ function logAny(obj, depth, stringLimit) {
   }
 
   var returnObj = {};
-  if (obj === _global2['default']) {
+  if (obj === window) {
     return returnObj;
   } else if (obj instanceof Error) {
-    obj.forEach(function (k, v) {
+    obj.forEach(function(k, v) {
       returnObj[k] = logAny(v);
     });
   } else if (obj instanceof Array) {
     for (var i = obj.length - 1; i >= 0; i--) {
       returnObj[i] = logDepth(obj[i], depth);
     }
-  } else if (_miscUtils.isNode(obj)) {
+  } else if (isNode(obj)) {
     returnObj = logHtmlElement(obj);
   } else if (obj instanceof Object) {
     if ('state' in obj && 'readyState' in obj) {
@@ -128,13 +114,9 @@ function logAny(obj, depth, stringLimit) {
     }
   } else {
     var _obj;
-    try {
-      _obj = JSON.stringify(obj);
-    } catch (e) {}
+    try{ _obj = JSON.stringify(obj); } catch(e) {}
     if (!_obj) {
-      try {
-        _obj = String(obj);
-      } catch (e) {}
+      try{ _obj = String(obj); } catch(e){}
     }
   }
   return returnObj;
@@ -165,4 +147,3 @@ function logHtmlElement(node) {
   returnObj.push('>');
   return returnObj.join(' ');
 }
-module.exports = exports['default'];

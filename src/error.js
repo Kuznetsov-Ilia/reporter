@@ -1,34 +1,25 @@
-'use strict';
-
-exports.__esModule = true;
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-var _global = require('global');
-
-var _global2 = _interopRequireDefault(_global);
-
-var _miscUtils = require('misc/utils');
-
+import window from 'global';
+import {isArray} from 'misc/utils';
 // grep -v 'Permission denied to access property' fuckup-in-debugger.log | grep -v 'Недостаточно памяти' | grep -v 'Uncaught illegal access' | grep -v 'out of memory' | less
-var isNotValid = function isNotValid(value) {
-  return value === undefined ? true : [null, true, false, '', 0, '0', 1, '1', 'null', 'undefined', 'true', 'false'].indexOf(value) !== -1;
+var isNotValid = function(value) {
+  return value === undefined ? true : [
+      null, true, false, '', 0, '0', 1, '1', 'null', 'undefined', 'true', 'false'
+    ].indexOf(value) !== -1;
 };
 var internalFileNamePattern;
 var errMap;
 var REPORTER;
-
-exports['default'] = function (args) {
+export default function(args) {
   internalFileNamePattern = args.internalFileNamePattern;
   errMap = args.errMap;
   REPORTER = args.REPORTER;
-  _global2['default'].onerror = onerrorHandler;
-};
+  window.onerror = onerrorHandler;
+}
 
 function handleFilename(filename, names) {
   var rlog;
   if (internalFileNamePattern.test(filename)) {
-    if (filename.includes(_global2['default'].location.host)) {
+    if (filename.includes(window.location.host)) {
       rlog = 'internal';
       names.push('internal');
     } else {
@@ -42,13 +33,11 @@ function handleFilename(filename, names) {
   return rlog;
 }
 
-function matches(stack) {
+function matches (stack) {
   return function (conf) {
     if (conf.includes) {
-      if (_miscUtils.isArray(conf.includes)) {
-        return conf.includes.some(function (inc) {
-          return stack.includes(inc);
-        });
+      if (isArray(conf.includes)) {
+        return conf.includes.some((inc) => stack.includes(inc));
       } else {
         return stack.includes(conf.includes);
       }
@@ -111,7 +100,7 @@ function onerrorHandler(message, filename, lineno, colno, error) {
         names.push('ff-Error-loading-script', 'script-not-loaded');
       } else if (message === 'Script error') {
         names.push('script-error', 'script-not-loaded');
-
+        
         /*
          Script error
          Error loading script
@@ -125,13 +114,14 @@ function onerrorHandler(message, filename, lineno, colno, error) {
          Объект не поддерживает это свойство или метод 
          Object doesn't support this property or method
          Uncaught SyntaxError: Unexpected token d
-         */
+
+        */
       } else if (message === 'Uncaught SyntaxError: Unexpected token d') {
-          names.push('Unexpected-token-d');
-          rlog = 'logger';
-        } else {
-          rlog = handleFilename(filename, names);
-        }
+        names.push('Unexpected-token-d');
+        rlog = 'logger';
+      } else {
+        rlog = handleFilename(filename, names)
+      }
       msg += ' f:' + filename;
     }
     if (isNotValid(lineno)) {
@@ -147,12 +137,10 @@ function onerrorHandler(message, filename, lineno, colno, error) {
     if (isNotValid(error)) {
       names.push('no-error-object');
       if (names.includes('internal')) {
-        if (isNotValid(lineno) || isNotValid(colno) || !message.includes('.js')) {
-          // can`t deal with it
+        if (isNotValid(lineno) || isNotValid(colno) || !message.includes('.js')) {// can`t deal with it
           names.splice(names.indexOf('internal'), 1);
-        } else {
-          // deal with it
-          msg = message + ' ' + [filename, lineno, colno].join(':');
+        } else { // deal with it
+          msg = message + ' ' + [filename, lineno, colno].join(':')
         }
       }
     } else {
@@ -185,4 +173,3 @@ function onerrorHandler(message, filename, lineno, colno, error) {
     });
   }
 }
-module.exports = exports['default'];

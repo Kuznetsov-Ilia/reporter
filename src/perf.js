@@ -2,20 +2,14 @@
 
 //https://gist.github.com/RubaXa/8662836#file-performance-js
 // allow running in Node.js environment
-"use strict";
+import window from 'global';
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-var _global = require('global');
-
-var _global2 = _interopRequireDefault(_global);
-
-var _PERF = _global2["default"].performance || {};
+var _PERF = window.performance || {};
 
 // We need to keep a global reference to the _PERF object to
 // prevent any added properties from being garbage-collected in Safari 8.
 // https://bugs.webkit.org/show_bug.cgi?id=137407
-_global2["default"]._perfRefForUserTimingPolyfill = _PERF;
+window._perfRefForUserTimingPolyfill = _PERF;
 
 //
 // Note what we shimmed
@@ -60,7 +54,7 @@ if (typeof _PERF.now !== "function") {
   // now() calls will be relative to our initialization.
   //
 
-  var nowOffset = +new Date();
+  var nowOffset = +(new Date());
   if (_PERF.timing && _PERF.timing.navigationStart) {
     nowOffset = _PERF.timing.navigationStart;
   }
@@ -74,7 +68,7 @@ if (typeof _PERF.now !== "function") {
     } else {
       // no Date.now support, get the time from new Date()
       _PERF.now = function () {
-        return +new Date() - nowOffset;
+        return +(new Date()) - nowOffset;
       };
     }
   }
@@ -90,14 +84,14 @@ if (typeof _PERF.now !== "function") {
  *
  * Will be blank if the environment supports PT.
  */
-var addToPerformanceTimeline = function addToPerformanceTimeline() {};
+var addToPerformanceTimeline = function () {};
 
 /**
  * Clears the specified entry types from our timeline array.
  *
  * Will be blank if the environment supports PT.
  */
-var clearEntriesFromPerformanceTimeline = function clearEntriesFromPerformanceTimeline() {};
+var clearEntriesFromPerformanceTimeline = function () {};
 
 // performance timeline array
 var performanceTimeline = [];
@@ -113,9 +107,11 @@ var hasNativeGetEntriesButNotUserTiming = false;
 // If getEntries() and mark() aren't defined, we'll assume
 // we have to shim at least some PT functions.
 //
-if (typeof _PERF.getEntries !== "function" || typeof _PERF.mark !== "function") {
+if (typeof _PERF.getEntries !== "function" ||
+  typeof _PERF.mark !== "function") {
 
-  if (typeof _PERF.getEntries === "function" && typeof _PERF.mark !== "function") {
+  if (typeof _PERF.getEntries === "function" &&
+    typeof _PERF.mark !== "function") {
     hasNativeGetEntriesButNotUserTiming = true;
   }
 
@@ -160,7 +156,7 @@ if (typeof _PERF.getEntries !== "function" || typeof _PERF.mark !== "function") 
   /**
    * Ensures our PT array is in the correct sorted order (by startTime)
    */
-  var ensurePerformanceTimelineOrder = function ensurePerformanceTimelineOrder() {
+  var ensurePerformanceTimelineOrder = function () {
     if (!performanceTimelineRequiresSort) {
       return;
     }
@@ -259,7 +255,8 @@ if (typeof _PERF.getEntries !== "function" || typeof _PERF.mark !== "function") 
      */
     _PERF.getEntriesByType = function (entryType) {
       // we only support marks/measures
-      if (typeof entryType === "undefined" || entryType !== "mark" && entryType !== "measure") {
+      if (typeof entryType === "undefined" ||
+        (entryType !== "mark" && entryType !== "measure")) {
 
         if (hasNativeGetEntriesButNotUserTiming && origGetEntriesByType) {
           // native version exists, forward
@@ -319,7 +316,8 @@ if (typeof _PERF.getEntries !== "function" || typeof _PERF.mark !== "function") 
       // find all entries of the name and (optionally) type
       var entries = [];
       for (i = 0; i < performanceTimeline.length; i++) {
-        if (typeof entryType !== "undefined" && performanceTimeline[i].entryType !== entryType) {
+        if (typeof entryType !== "undefined" &&
+          performanceTimeline[i].entryType !== entryType) {
           continue;
         }
 

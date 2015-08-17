@@ -1,8 +1,4 @@
-"use strict";
-
-exports.__esModule = true;
-
-exports["default"] = function (cb) {
+export default function(cb) {
   return function (event, xhr, settings, exception) {
     var data = {};
     if (exception) {
@@ -24,6 +20,4 @@ exports["default"] = function (cb) {
     }
     cb(data);
   };
-};
-
-module.exports = exports["default"];
+}

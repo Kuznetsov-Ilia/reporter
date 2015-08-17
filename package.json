@@ -2,6 +2,11 @@
   "name": "reporter",
   "version": "0.0.0",
   "description": "reporter",
+  "scripts": {
+    "start": "babel src --out-dir .",
+    "watch": "babel src --out-dir . --watch"
+  },
+  "main": "src/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/QiV/reporter.git"
@@ -14,15 +19,14 @@
   "bugs": {
     "url": "https://github.com/QiV/reporter/issues"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "babel": "^5.8.21",
+    "babelify": "^6.1.3"
+  },
   "dependencies": {
     "global": "git+https://github.com/QiV/global.git#master"
   },
   "gitHead": "2278feb8d679471efe82a767a50148c9f84ed30f",
   "readme": "ERROR: No README data found!",
-  "homepage": "https://github.com/QiV/reporter#readme",
-  "browserify": {
-    "transform": ["babelify"]
-  }
-
+  "homepage": "https://github.com/QiV/reporter#readme"
 }
