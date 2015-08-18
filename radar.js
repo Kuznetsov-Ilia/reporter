@@ -6,10 +6,11 @@ var _miscUtils = require('misc/utils');
 
 exports['default'] = Radar;
 
-function Radar(project, host, customTransform) {
+function Radar(project, host, customTransform, releaseID) {
   this.project = project;
   this.host = host;
   this.customTransform = customTransform;
+  this.releaseID = releaseID;
 }
 _miscUtils.extend(Radar.prototype, {
   get: function get(input) {
@@ -32,6 +33,9 @@ _miscUtils.extend(Radar.prototype, {
 
     if (input.f) {
       var msg = [];
+      if (this.releaseID) {
+        msg.push(this.releaseID);
+      }
       if (data.i) {
         msg.push(data.i);
       }
