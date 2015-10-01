@@ -44,10 +44,6 @@ if (window.performance && window.performance.timing) {
 
   // Total time from start to load
   api.loadTime = loadEventEnd - TIMING.navigationStart;
-  //
-  api.domProcessing = domComplete - TIMING.domLoading;
-  // Time spent constructing the DOM tree
-  api.domReadyTime = domComplete - TIMING.domInteractive;
   // Time consumed prepaing the new page
   api.readyStart = TIMING.fetchStart - TIMING.navigationStart;
   // Time spent during redirection
@@ -68,6 +64,10 @@ if (window.performance && window.performance.timing) {
   api.loadEventTime = loadEventEnd - loadEventStart;
   // Dom content loading
   api.domContentLoading = TIMING.domContentLoadedEventStart - TIMING.domLoading;
+  //
+  api.domProcessing = domComplete - TIMING.domLoading;
+  // Time spent constructing the DOM tree
+  api.domReadyTime = domComplete - TIMING.domInteractive;
   //
   api.timeToFirstByte = TIMING.responseStart - TIMING.navigationStart;
 }
