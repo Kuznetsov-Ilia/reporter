@@ -1,18 +1,16 @@
-'use strict';
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
 var _global = require('global');
 
 var _global2 = _interopRequireDefault(_global);
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var api = { stillLoading: 1 };
-if (_global2['default'].performance && _global2['default'].performance.timing) {
-  var TIMING = _global2['default'].performance.timing;
+if (_global2.default.performance && _global2.default.performance.timing) {
+  var TIMING = _global2.default.performance.timing;
   // All times are relative times to the start time within the
   // same objects
   var firstPaint = 0;
-  var CHROME = _global2['default'].chrome;
+  var CHROME = _global2.default.chrome;
 
   if (TIMING.loadEventEnd - TIMING.navigationStart < 0) {
     //Page is still loading - please try again when page is loaded
@@ -51,10 +49,6 @@ if (_global2['default'].performance && _global2['default'].performance.timing) {
 
   // Total time from start to load
   api.loadTime = loadEventEnd - TIMING.navigationStart;
-  //
-  api.domProcessing = domComplete - TIMING.domLoading;
-  // Time spent constructing the DOM tree
-  api.domReadyTime = domComplete - TIMING.domInteractive;
   // Time consumed prepaing the new page
   api.readyStart = TIMING.fetchStart - TIMING.navigationStart;
   // Time spent during redirection
@@ -75,6 +69,10 @@ if (_global2['default'].performance && _global2['default'].performance.timing) {
   api.loadEventTime = loadEventEnd - loadEventStart;
   // Dom content loading
   api.domContentLoading = TIMING.domContentLoadedEventStart - TIMING.domLoading;
+  //
+  api.domProcessing = domComplete - TIMING.domLoading;
+  // Time spent constructing the DOM tree
+  api.domReadyTime = domComplete - TIMING.domInteractive;
   //
   api.timeToFirstByte = TIMING.responseStart - TIMING.navigationStart;
 }

@@ -1,21 +1,19 @@
-//"use strict";
-
-//https://gist.github.com/RubaXa/8662836#file-performance-js
-// allow running in Node.js environment
-"use strict";
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-var _global = require('global');
+var _global = require("global");
 
 var _global2 = _interopRequireDefault(_global);
 
-var _PERF = _global2["default"].performance || {};
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var _PERF = _global2.default.performance || {};
 
 // We need to keep a global reference to the _PERF object to
 // prevent any added properties from being garbage-collected in Safari 8.
 // https://bugs.webkit.org/show_bug.cgi?id=137407
-_global2["default"]._perfRefForUserTimingPolyfill = _PERF;
+//"use strict";
+
+//https://gist.github.com/RubaXa/8662836#file-performance-js
+// allow running in Node.js environment
+_global2.default._perfRefForUserTimingPolyfill = _PERF;
 
 //
 // Note what we shimmed
@@ -143,7 +141,7 @@ if (typeof _PERF.getEntries !== "function" || typeof _PERF.mark !== "function") 
    *
    * @param {Object} obj PerformanceEntry
    */
-  addToPerformanceTimeline = function (obj) {
+  addToPerformanceTimeline = function addToPerformanceTimeline(obj) {
     performanceTimeline.push(obj);
 
     //
@@ -191,7 +189,7 @@ if (typeof _PERF.getEntries !== "function" || typeof _PERF.mark !== "function") 
    * @param {string} entryType Entry type (eg "mark" or "measure")
    * @param {string} [name] Entry name (optional)
    */
-  clearEntriesFromPerformanceTimeline = function (entryType, name) {
+  clearEntriesFromPerformanceTimeline = function clearEntriesFromPerformanceTimeline(entryType, name) {
     // clear all entries from the perf timeline
     i = 0;
     while (i < performanceTimeline.length) {

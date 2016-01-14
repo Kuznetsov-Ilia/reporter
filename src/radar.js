@@ -1,4 +1,4 @@
-import {isObject, isString, isArray, extend} from 'misc/utils';
+import {isObject, isString, isArray, isNumber, extend} from 'misc/utils';
 
 export default Radar;
 
@@ -14,10 +14,9 @@ extend(Radar.prototype, {
     data.p = input.p || this.project;
     data.t = input.t || '';
     data.v = input.v || 1;
-
     if (input.n) {
       var i = input.n;
-      if (isString(i)) {
+      if (isString(i) || isNumber(i)) {
         i += ':1';
       } else if (isArray(i) && !isObject(i[0])) {
         i = i.join(':1,') + ':1';

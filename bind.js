@@ -1,11 +1,6 @@
-'use strict';
-
 exports.__esModule = true;
-var logKeys = [0, 0, 0, 0];
-var kombos;
-var LOG;
 
-exports['default'] = function (_LOG, keys) {
+exports.default = function (_LOG, keys) {
   kombos = keys;
   LOG = _LOG;
   /*kombo.push(keys.join(''));
@@ -13,6 +8,10 @@ exports['default'] = function (_LOG, keys) {
    })*/
   // document.on('keydown', keyDownHandler);
 };
+
+var logKeys = [0, 0, 0, 0];
+var kombos;
+var LOG;
 
 function keyDownHandler(e) {
   logKeys.shift();
@@ -26,4 +25,3 @@ function keyDownHandler(e) {
     LOG.show();
   }
 }
-module.exports = exports['default'];

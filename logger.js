@@ -1,26 +1,23 @@
-'use strict';
-
 exports.__esModule = true;
-exports['default'] = myAwsomelogger;
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+exports.default = myAwsomelogger;
 
 var _global = require('global');
 
 var _global2 = _interopRequireDefault(_global);
 
-var _miscUtils = require('misc/utils');
+var _utils = require('misc/utils');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function myAwsomelogger() {
   this.log = [];
   this.max = 999;
 }
-
 myAwsomelogger.prototype.set = function (input) {
   if (this.log.length > 999) {
     this.clear();
   }
-  var data = _miscUtils.extend({}, input, {
+  var data = (0, _utils.extend)({}, input, {
     date: Math.round(Date.now())
   });
   data.d = logAny(input.d, 2);
@@ -33,7 +30,7 @@ myAwsomelogger.prototype.show = function () {
   var strUrl = '/debugger.html';
   var winName = 'debugger'; /*+ Math.random()*/;
   var logs = dddddd(this.log);
-  var wdegugger = _global2['default'].open(strUrl, winName);
+  var wdegugger = _global2.default.open(strUrl, winName);
   setTimeout(sendLogs, 300);
   function sendLogs() {
     if (wdegugger) {
@@ -67,7 +64,7 @@ function dddddd(logs) {
       dates[view.t] = view.date;
       max = Math.max(max, view.date);
     });
-    var data = _miscUtils.extend(dates, {
+    var data = (0, _utils.extend)(dates, {
       entity: views[0].d.entity,
       id: views[0].id
     });
@@ -96,7 +93,7 @@ function logAny(obj, depth, stringLimit) {
   }
 
   var returnObj = {};
-  if (obj === _global2['default']) {
+  if (obj === _global2.default) {
     return returnObj;
   } else if (obj instanceof Error) {
     obj.forEach(function (k, v) {
@@ -106,7 +103,7 @@ function logAny(obj, depth, stringLimit) {
     for (var i = obj.length - 1; i >= 0; i--) {
       returnObj[i] = logDepth(obj[i], depth);
     }
-  } else if (_miscUtils.isNode(obj)) {
+  } else if ((0, _utils.isNode)(obj)) {
     returnObj = logHtmlElement(obj);
   } else if (obj instanceof Object) {
     if ('state' in obj && 'readyState' in obj) {
@@ -165,4 +162,3 @@ function logHtmlElement(node) {
   returnObj.push('>');
   return returnObj.join(' ');
 }
-module.exports = exports['default'];

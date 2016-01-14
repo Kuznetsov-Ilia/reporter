@@ -1,5 +1,3 @@
-'use strict';
-
 var $ = require('$');
 var REPORTER = require('reporter');
 $.on('all', function (name, data) {

@@ -1,14 +1,19 @@
-'use strict';
-
 exports.__esModule = true;
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+exports.default = function (args) {
+  internalFileNamePattern = args.internalFileNamePattern;
+  errMap = args.errMap;
+  REPORTER = args.REPORTER;
+  _global2.default.onerror = onerrorHandler;
+};
 
 var _global = require('global');
 
 var _global2 = _interopRequireDefault(_global);
 
-var _miscUtils = require('misc/utils');
+var _utils = require('misc/utils');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // grep -v 'Permission denied to access property' fuckup-in-debugger.log | grep -v 'Недостаточно памяти' | grep -v 'Uncaught illegal access' | grep -v 'out of memory' | less
 var isNotValid = function isNotValid(value) {
@@ -18,17 +23,10 @@ var internalFileNamePattern;
 var errMap;
 var REPORTER;
 
-exports['default'] = function (args) {
-  internalFileNamePattern = args.internalFileNamePattern;
-  errMap = args.errMap;
-  REPORTER = args.REPORTER;
-  _global2['default'].onerror = onerrorHandler;
-};
-
 function handleFilename(filename, names) {
   var rlog;
   if (internalFileNamePattern.test(filename)) {
-    if (filename.includes(_global2['default'].location.host)) {
+    if (filename.includes(_global2.default.location.host)) {
       rlog = 'internal';
       names.push('internal');
     } else {
@@ -45,7 +43,7 @@ function handleFilename(filename, names) {
 function matches(stack) {
   return function (conf) {
     if (conf.includes) {
-      if (_miscUtils.isArray(conf.includes)) {
+      if ((0, _utils.isArray)(conf.includes)) {
         return conf.includes.some(function (inc) {
           return stack.includes(inc);
         });
@@ -185,4 +183,3 @@ function onerrorHandler(message, filename, lineno, colno, error) {
     });
   }
 }
-module.exports = exports['default'];
