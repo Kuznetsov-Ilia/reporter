@@ -5,7 +5,7 @@
   "scripts": {
     "start": "babel src --out-dir .",
     "watch": "babel src --out-dir . --watch",
-    "o": "babel src/error.js | uglifyjs -e -m sort,eval -c drop_console,dead_code,drop_debugger,unsafe,comparisons,conditionals,booleans,loops,unused,if_return,warnings > dist/logger.js",
+    "o": "babel src/error.js | uglifyjs -e -m sort,eval -c drop_console,dead_code,drop_debugger,unsafe,comparisons,conditionals,booleans,loops,unused,if_return,warnings > dist/error.js",
     "o:prod": "babel src/error.js | uglifyjs -e -m sort,eval -c drop_console,dead_code,drop_debugger,unsafe,comparisons,conditionals,booleans,loops,unused,if_return,warnings > ../otvet.mail.ru/app/js/logger.js",
     "o:dev": "babel src/error.js | uglifyjs -e -m sort,eval -c drop_console,dead_code,drop_debugger,unsafe,comparisons,conditionals,booleans,loops,unused,if_return,warnings > /Users/ikuznecov/projects/otvet.mail.ru/virtualko/newapibig/app/js/logger.js"
   },

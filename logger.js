@@ -22,11 +22,15 @@ _logger.prototype.set = function (group, name, data) {
   if (this.log.length > 998) {
     this.log.shift();
   }
+  var d = '';
+  if (typeof data === 'object' && ['[object Object]', '[object Array]'].indexOf(data.toString() !== -1)) {
+    d = JSON.stringify(data, null, ' ');
+  }
   this.log.push({
     group: String(group),
     name: String(name),
     date: now(),
-    data: JSON.stringify(data, null, ' ')
+    data: d
   });
 };
 _logger.prototype.show = function () {

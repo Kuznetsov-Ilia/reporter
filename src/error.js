@@ -1,6 +1,6 @@
 var release_id = window.RELEASE_ID;
-var url = '//otvet.radar.imgsmail.ru/update';
-var project = 'otvet';
+var url = window.radarURL || 'otvet';
+var project = window.radarPROJECT || '//otvet.radar.imgsmail.ru/update';
 var loaded = 'before';
 var errTypes = [
   'EvalError',
@@ -18,7 +18,6 @@ var blackList = [
   'SwfStore',
   'DealPly',
   'Object.parse',
-  'Script error',
   'night_mode_disable',
   'atomicFindClose',
   'captureReady',
@@ -42,6 +41,7 @@ window.onload = () => loaded = 'after';
 window.onerror = (message, filename, lineno, colno, errorObject) => {
   var err = ensure(message, filename, lineno, colno, errorObject);
   var interval = [loaded, release_id];
+  var rlog;
   if (isUndefined(bro)) {
     bro = getBro();
   }
@@ -76,16 +76,23 @@ window.onerror = (message, filename, lineno, colno, errorObject) => {
     }
   }
   if (interval.indexOf('internal') !== -1 && check(err.message)) {
-    if (err.stack && err.stack.indexOf('.js') !== -1) {
-      radar('error', interval, { error: msg });
-    } else {
-      interval.push('not-handable');
-      radar('error', interval, { 'not-handable': msg });
+    interval = interval.concat(
+      checkCustom(err.message),
+      checkCustomStack(err.stack)
+    );
+    if (interval.indexOf('notloaded') === -1
+    && interval.indexOf('extensions') === -1) {
+      if (err.stack && err.stack.indexOf('.js') !== -1) {
+        rlog = { error: msg };
+      } else {
+        interval.push('not-handable');
+        rlog = { 'not-handable': msg };
+      }
     }
   } else {
     interval.push('garbage');
-    radar('error', interval);
   }
+  radar('error', interval, rlog);
 };
 window.AppError = AppError;
 window.radar = radar;
@@ -103,7 +110,7 @@ function ensure(message, filename, lineno, colno, errorObject) {
 
     for (var i = 0, l = errTypes.length; i < l; i++) {
       if (window[errTypes[i]] && errorObject instanceof window[errTypes[i]]) {
-        err.type = i;
+        err.type = errTypes[i];
         break;
       }
     }
@@ -119,7 +126,7 @@ function ensure(message, filename, lineno, colno, errorObject) {
   }
 
   if (!err.stack) {
-    if (Error.captureStackTrace) {
+    if (Error.captureStackTrace && typeof errorObject === 'object') {
       Error.captureStackTrace(errorObject, ensure);
       err.stack = errorObject.stack;
     } else {
@@ -145,19 +152,19 @@ function isUndefined(a) {
 
 function parse(err) {
   var msg = [];
-  var interval = [];
+  var err_stats = [];
   var props = ['message', 'filename', 'lineno', 'colno', 'stack'];
   for (var i = 0, l = props.length; i < l; i++) {
     var property = props[i];
     if (isUndefined(err[property])) {
-      interval.push(`no_${property}`);
+      err_stats.push(`no_${property}`);
     } else {
       msg.push(`${property.slice(0, 1)}:${err[property]}`);
     }
   }
   msg = msg.join(',');
   return {
-    msg, interval
+    msg, err_stats
   };
 }
 
@@ -171,6 +178,29 @@ function check(message) {
     return true;
   }
   return false;
+}
+function checkCustom(message) {
+  var interval = [];
+  if (message && typeof message === 'string') {
+    if (/Script error|Error loading script/.test(message)) {
+      interval.push('notloaded');
+    }
+  }
+  return interval;
+}
+
+function checkCustomStack(stack) {
+  var interval = [];
+  if (stack && typeof stack === 'string') {
+    if (/The mark .+ does not exist|Performance/.test(stack)) {
+      interval.push('performance');
+    } else if (/at Object.stringify (native)|selectionDirection/.test(stack)) {
+      interval.push('stringify');
+    } else if (/extensions::|chrome-extension:/.test(stack)) {
+      interval.push('extensions');
+    }
+  }
+  return interval;
 }
 
 
@@ -300,36 +330,48 @@ function getBro() {
     M.splice(1, 1, tem[1]);
   }
 
-
   return M;
 }
 
 function getPlatform() {
-  var ua = navigator.userAgent;
-  if (ua.match(/windows|win32/i)) {
-    return 'win';
-  } else if (ua.match(/macintosh|mac os x/i)) {
-    return 'mac';
-  } else if (ua.match(/linux/i)) {
-    return 'linux';
-  } else if (ua.match(/adobeair/i)) {
-    return 'adobeair';
-  } else if (ua.match(/Android/i)) {
-    return 'android';
-  } else if (ua.match(/PlayStation/i)) {
-    return 'playstation';
-  } else if (ua.match(/Nintendo/i)) {
-    return 'nintendo';
-  } else if (ua.match(/Symbian|SymbOS/i)) {
-    return 'symbian';
-  } else if (ua.match(/Nokia/i)) {
-    return 'nokia';
-  } else if (ua.match(/Opera Mini/i)) {
-    return 'operamini';
-  } else if (ua.match(/Mobile/i)) {
-    return 'mobile';
+  if (window.isWebView) {
+    return 'webview';
+  } else if (window.isTouch) {
+    if (window.MEDIA && window.MEDIA.osname) {
+      var osname = window.MEDIA.osname;
+      return /iPhone/.test(osname) ? 'ios'
+      : (/Android/.test(osname) ? 'android'
+        : (/Win/.test(osname) ? 'win'
+          : 'other')
+        );
+    }
   } else {
-    return 'unknown';
+    var ua = navigator.userAgent;
+    if (ua.match(/windows|win32/i)) {
+      return 'win';
+    } else if (ua.match(/macintosh|mac os x/i)) {
+      return 'mac';
+    } else if (ua.match(/linux/i)) {
+      return 'linux';
+    } else if (ua.match(/adobeair/i)) {
+      return 'adobeair';
+    } else if (ua.match(/Android/i)) {
+      return 'android';
+    } else if (ua.match(/PlayStation/i)) {
+      return 'playstation';
+    } else if (ua.match(/Nintendo/i)) {
+      return 'nintendo';
+    } else if (ua.match(/Symbian|SymbOS/i)) {
+      return 'symbian';
+    } else if (ua.match(/Nokia/i)) {
+      return 'nokia';
+    } else if (ua.match(/Opera Mini/i)) {
+      return 'operamini';
+    } else if (ua.match(/Mobile/i)) {
+      return 'mobile';
+    } else {
+      return 'unknown';
+    }
   }
 }
 
@@ -352,7 +394,11 @@ function AppError(message, data) {
     if (!message) {
       message = '';
     }
-    message += ` : ${JSON.stringify(data)}`;
+    try {
+      message += ` : ${JSON.stringify(data)}`;
+    } catch(e) {
+      radar('debug', 'JSONstringify', {stringify: String(e)});
+    }
   }
   this.message = message === undefined ? err.message : message;
   this.fileName = err.fileName;
@@ -363,3 +409,109 @@ AppError.prototype = new Error();
 AppError.prototype.constructor = AppError;
 AppError.prototype.name = 'AppError';
 
+var slice = Array.prototype.slice;
+
+if (document.documentElement && document.documentElement.shadowRoot) {
+  setTimeout(checkShadowRoot, 1500);
+}
+if ([].forEach) {// only modern bro
+  setTimeout(checkStyleSheets, 1500);
+}
+
+function shallStop() {
+  if (window.isWebView) {
+    return true;
+  } else if (window.isTouch) {
+    return checkif3333isVisible();
+  } else {
+    return checkIfColumnRightIsVisible();
+  }
+}
+function checkif3333isVisible() {
+  var res = false;
+  try {
+    res = document.querySelector('.adq3333').offsetHeight > 0;
+  } catch(e) {}
+  return res;
+}
+function checkIfColumnRightIsVisible() {
+  var res = false;
+  try {
+    res = document.getElementById('ColumnRight').offsetHeight > 0;
+  } catch(e) {}
+  return res;
+}
+function checkShadowRoot() {
+  if (shallStop()) {
+    return false;
+  }
+  try {
+    var shadowFound = false;
+    var intervals = [];
+    slice.call(document.documentElement.shadowRoot.childNodes)
+      .filter(i => i instanceof HTMLShadowElement)
+      .map(shadow => {
+        shadowFound = true;
+        var el = shadow.nextElementSibling;
+        while (el) {
+          if (el instanceof HTMLStyleElement) {
+            return el.sheet;
+          } else {
+            el = el.nextElementSibling;
+          }
+        }
+        return [];
+      })
+      .forEach(sheet => sheet.disabled = true);
+    if (shadowFound) {
+      intervals.push('shadowFound');
+    }
+    radar('adblock', intervals);
+  } catch (e) {
+    radar('adblock', 'error', { adshadow: String(e) });
+  }
+}
+function checkStyleSheets() {
+  if (shallStop()) {
+    return false;
+  }
+  try {
+    var styleSheetDisabled = false;
+    slice.call(document.styleSheets)
+      .filter(sheet => !sheet.href)
+      .filter(sheet => sheet.cssRules)
+      .filter(sheet => slice.call(sheet.cssRules)
+        .filter(rule => rule.style && rule.style.length > 0)
+        .some(rule => slice.call(rule.style).indexOf('orphans') !== -1)
+      )
+      .forEach(sheet => (styleSheetDisabled = true, sheet.disabled = true));
+    if (styleSheetDisabled) {
+      radar('adblock', 'styleSheetDisabled');
+    }
+  } catch(e) {
+    radar('adblock', 'error', { adstylesheet: String(e) });
+  }
+}
+
+/*
+grep 'polyfills.min.js' otvet-error.log
+
+grep 'window.TemporaryTokenList' -v
+grep -v 'parent'
+grep -v 'selectionDirection'
+grep -v 'dispatchEvent'
+grep -v 'console'
+grep -v 'at Object.stringify (native)'
+grep -v 'Performance'
+
+grep -v 'Error loading script'
+grep -v 'filename is undefined'
+grep -v "Cannot call method 'match' of undefined"
+grep -v 'The mark'
+grep -v "Cannot read property 'match' of undefined"
+grep -v 'illegal character'
+grep -v 'extension'
+grep -v 'localStorage'
+grep -v 'Object.defineProperty called on non-object'
+
+*/
