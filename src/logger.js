@@ -9,7 +9,7 @@ _logger.prototype.set = function(group, name, data) {
     this.log.shift();
   }
   var d = '';
-  if (typeof data === 'object' &&
+  if (typeof data === 'object' && data !== null &&
     ['[object Object]', '[object Array]'].indexOf(data.toString() !== -1)
   ) {
     d = JSON.stringify(data, null, ' ');
