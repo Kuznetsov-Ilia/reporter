@@ -126,12 +126,7 @@ function ensure(message, filename, lineno, colno, errorObject) {
   }
 
   if (!err.stack) {
-    if (Error.captureStackTrace && typeof errorObject === 'object') {
-      Error.captureStackTrace(errorObject, ensure);
-      err.stack = errorObject.stack;
-    } else {
-      err.stack = (new Error()).stack;
-    }
+    err.stack = (new Error()).stack;
     if (err.stack) { // remove one stack level:
       if (!isUndefined(window.Components)) { // Mozilla:
         err.stack = err.stack.substring(err.stack.indexOf('\n') + 1);
