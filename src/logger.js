@@ -10,9 +10,20 @@ _logger.prototype.set = function(group, name, data) {
   }
   var d = '';
   if (typeof data === 'object' && data !== null && !data.originalEvent &&
+    !data.context &&
     ['[object Object]', '[object Array]'].indexOf(data.toString() !== -1)
   ) {
-    d = JSON.stringify(data, null, ' ');
+    try {
+      d = JSON.stringify(data, null, ' ');
+    } catch(e) {
+      window.radar('debug', 'JSONstringify', {
+        stringify: JSON.stringify({
+          ht: now() - window.HEAD_TIME,
+          keys: Object.keys(data),
+          e: String(e)
+        })
+      });
+    }
   }
   this.log.push({
     group: String(group),

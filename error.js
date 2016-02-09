@@ -1,6 +1,10 @@
 var release_id = window.RELEASE_ID;
 var url = window.radarURL || 'otvet';
 var project = window.radarPROJECT || '//otvet.radar.imgsmail.ru/update';
+var now = Date.now === undefined ? function () {
+  return Number(new Date());
+} : Date.now;
+window.HEAD_TIME = now();
 var loaded = 'before';
 var errTypes = ['EvalError', 'InternalError', 'RangeError', 'ReferenceError', 'SyntaxError', 'TypeError', 'URIError', 'AppError'];
 var blackList = ['zStartIndexer', 'evalSmlo', 'SwfStore', 'DealPly', 'Object.parse', 'night_mode_disable', 'atomicFindClose', 'captureReady', 'Недостаточно места на диске', 'MailRuApi is not defined', 'getLoginButtonSignatureCodes', 'clearOverlappingSelection', 'onReceivedTouchIcons', 'The system cannot find the path specified', 'SelectedDivWithSearchText', '\'ucwp\' is undefined', '__gCrWeb'];
@@ -58,11 +62,12 @@ window.onerror = function (message, filename, lineno, colno, errorObject) {
   if (interval.indexOf('internal') !== -1 && check(err.message)) {
     interval = interval.concat(checkCustom(err.message), checkCustomStack(err.stack));
     if (interval.indexOf('notloaded') === -1 && interval.indexOf('extensions') === -1) {
+      var _msg = 'ht:' + (now() - window.HEAD_TIME) + ',' + msg;
       if (err.stack && err.stack.indexOf('.js') !== -1) {
-        rlog = { error: msg };
+        rlog = { error: _msg };
       } else {
         interval.push('not-handable');
-        rlog = { 'not-handable': msg };
+        rlog = { 'not-handable': _msg };
       }
     }
   } else {
@@ -102,12 +107,7 @@ function ensure(message, filename, lineno, colno, errorObject) {
   }
 
   if (!err.stack) {
-    if (Error.captureStackTrace && typeof errorObject === 'object') {
-      Error.captureStackTrace(errorObject, ensure);
-      err.stack = errorObject.stack;
-    } else {
-      err.stack = new Error().stack;
-    }
+    err.stack = new Error().stack;
     if (err.stack) {
       // remove one stack level:
       if (!isUndefined(window.Components)) {
@@ -281,11 +281,15 @@ function viaSendBeacon(data) {
 function viaImg(data) {
   if (typeof data === 'object') {
     var img = new Image();
+    var start_time = now();
+    var d = function d() {
+      return now() - start_time;
+    };
     img.onerror = function () {
-      return radar('kaktam', 'error');
+      var t = d();radar({ kaktam: t }, 'error:' + t);
     };
     img.onload = function () {
-      return radar('kaktam', 'load');
+      var t = d();radar({ kaktam: t }, 'load:' + t);
     };
     var params = [];
     for (var i in data) {

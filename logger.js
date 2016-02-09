@@ -23,8 +23,18 @@ _logger.prototype.set = function (group, name, data) {
     this.log.shift();
   }
   var d = '';
-  if (typeof data === 'object' && data !== null && ['[object Object]', '[object Array]'].indexOf(data.toString() !== -1)) {
-    d = JSON.stringify(data, null, ' ');
+  if (typeof data === 'object' && data !== null && !data.originalEvent && !data.context && ['[object Object]', '[object Array]'].indexOf(data.toString() !== -1)) {
+    try {
+      d = JSON.stringify(data, null, ' ');
+    } catch (e) {
+      _global2.default.radar('debug', 'JSONstringify', {
+        stringify: JSON.stringify({
+          ht: now() - _global2.default.HEAD_TIME,
+          keys: Object.keys(data),
+          e: String(e)
+        })
+      });
+    }
   }
   this.log.push({
     group: String(group),

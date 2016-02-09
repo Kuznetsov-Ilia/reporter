@@ -1,6 +1,8 @@
 var release_id = window.RELEASE_ID;
 var url = window.radarURL || 'otvet';
 var project = window.radarPROJECT || '//otvet.radar.imgsmail.ru/update';
+const now = Date.now === undefined ? () => Number(new Date()) : Date.now;
+window.HEAD_TIME = now();
 var loaded = 'before';
 var errTypes = [
   'EvalError',
@@ -82,11 +84,12 @@ window.onerror = (message, filename, lineno, colno, errorObject) => {
     );
     if (interval.indexOf('notloaded') === -1
     && interval.indexOf('extensions') === -1) {
+      var _msg = `ht:${now() - window.HEAD_TIME},${msg}`;
       if (err.stack && err.stack.indexOf('.js') !== -1) {
-        rlog = { error: msg };
+        rlog = { error: _msg };
       } else {
         interval.push('not-handable');
-        rlog = { 'not-handable': msg };
+        rlog = { 'not-handable': _msg };
       }
     }
   } else {
@@ -294,8 +297,10 @@ function viaSendBeacon(data) {
 function viaImg(data) {
   if (typeof data === 'object') {
     var img = new Image();
-    img.onerror = () => radar('kaktam', 'error');
-    img.onload = () => radar('kaktam', 'load');
+    var start_time = now();
+    var d = () => now() - start_time;
+    img.onerror = () => { var t = d(); radar({kaktam: t}, `error:${t}`); };
+    img.onload = () => { var t = d(); radar({kaktam: t}, `load:${t}`); };
     var params = [];
     for (var i in data) {
       params.push(`${i}=${data[i]}`);
