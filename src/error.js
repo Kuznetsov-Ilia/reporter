@@ -297,10 +297,6 @@ function viaSendBeacon(data) {
 function viaImg(data) {
   if (typeof data === 'object') {
     var img = new Image();
-    var start_time = now();
-    var d = () => now() - start_time;
-    img.onerror = () => { var t = d(); radar({kaktam: t}, `error:${t}`); };
-    img.onload = () => { var t = d(); radar({kaktam: t}, `load:${t}`); };
     var params = [];
     for (var i in data) {
       params.push(`${i}=${data[i]}`);
