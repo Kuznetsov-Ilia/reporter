@@ -50,9 +50,7 @@ window.onerror = (message, filename, lineno, colno, errorObject) => {
   if (isUndefined(platform)) {
     platform = getPlatform();
     if (platform === 'unknown' && navigator.userAgent) {
-      radar('debug', 'unknown-platform', {
-        platform: 'unknown'
-      });
+      radar('debug', 'unknown-platform', { platform: 'unknown' });
     }
   }
   if (bro[0]) {
@@ -102,7 +100,7 @@ window.radar = radar;
 
 function ensure(message, filename, lineno, colno, errorObject) {
   var err = {};
-  if (typeof errorObject === 'object') {
+  if (isObject(errorObject)) {
     err = {
       colno: isUndefined(errorObject.columnNumber) ? colno : errorObject.columnNumber,
       lineno: isUndefined(errorObject.lineNumber) ? lineno : errorObject.lineNumber,
@@ -117,7 +115,7 @@ function ensure(message, filename, lineno, colno, errorObject) {
         break;
       }
     }
-  } else if (typeof message === 'object') {
+  } else if (isObject(message)) {
     err = message;
   } else {
     err = {
@@ -146,6 +144,9 @@ function ensure(message, filename, lineno, colno, errorObject) {
 
 function isUndefined(a) {
   return a === undefined;
+}
+function isObject(a) {
+  return a !== null && typeof a === 'object';
 }
 
 function parse(err) {
