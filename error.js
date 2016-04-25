@@ -27,9 +27,7 @@ window.onerror = function (message, filename, lineno, colno, errorObject) {
   if (isUndefined(platform)) {
     platform = getPlatform();
     if (platform === 'unknown' && navigator.userAgent) {
-      radar('debug', 'unknown-platform', {
-        platform: 'unknown'
-      });
+      radar('debug', 'unknown-platform', { platform: 'unknown' });
     }
   }
   if (bro[0]) {
@@ -80,7 +78,7 @@ window.radar = radar;
 
 function ensure(message, filename, lineno, colno, errorObject) {
   var err = {};
-  if (typeof errorObject === 'object') {
+  if (isObject(errorObject)) {
     err = {
       colno: isUndefined(errorObject.columnNumber) ? colno : errorObject.columnNumber,
       lineno: isUndefined(errorObject.lineNumber) ? lineno : errorObject.lineNumber,
@@ -95,7 +93,7 @@ function ensure(message, filename, lineno, colno, errorObject) {
         break;
       }
     }
-  } else if (typeof message === 'object') {
+  } else if (isObject(message)) {
     err = message;
   } else {
     err = {
@@ -127,6 +125,9 @@ function ensure(message, filename, lineno, colno, errorObject) {
 
 function isUndefined(a) {
   return a === undefined;
+}
+function isObject(a) {
+  return a !== null && typeof a === 'object';
 }
 
 function parse(err) {
@@ -245,7 +246,7 @@ function radar(t, i, r) {
   if (typeof r === 'object') {
     for (var k in r) {
       if (r.hasOwnProperty(k)) {
-        filename = 'otvet-' + k;
+        filename = url + '-' + k;
         message = r[k];
       }
     }
@@ -281,16 +282,6 @@ function viaSendBeacon(data) {
 function viaImg(data) {
   if (typeof data === 'object') {
     var img = new Image();
-    var start_time = now();
-    var d = function d() {
-      return now() - start_time;
-    };
-    img.onerror = function () {
-      var t = d();radar({ kaktam: t }, 'error:' + t);
-    };
-    img.onload = function () {
-      var t = d();radar({ kaktam: t }, 'load:' + t);
-    };
     var params = [];
     for (var i in data) {
       params.push(i + '=' + data[i]);
