@@ -5,7 +5,8 @@
   "scripts": {
     "start": "babel src --out-dir .",
     "watch": "babel src --out-dir . --watch",
-    "o": "babel src/error.js | uglifyjs -e -m sort,eval -c drop_console,dead_code,drop_debugger,unsafe,comparisons,conditionals,booleans,loops,unused,if_return,warnings > dist/error.js",
+    "a": "babel --presets=babel-preset-normal-please src/error.js",
+    "o": "babel ./src/error.js | uglifyjs -e -m sort,eval -c drop_console,dead_code,drop_debugger,unsafe,comparisons,conditionals,booleans,loops,unused,if_return,warnings > ./dist/error.js",
     "o:prod": "babel src/error.js | uglifyjs -e -m sort,eval -c drop_console,dead_code,drop_debugger,unsafe,comparisons,conditionals,booleans,loops,unused,if_return,warnings > ../otvet.mail.ru/app/js/logger.js",
     "o:dev": "babel src/error.js | uglifyjs -e -m sort,eval -c drop_console,dead_code,drop_debugger,unsafe,comparisons,conditionals,booleans,loops,unused,if_return,warnings > /Users/ikuznecov/projects/otvet.mail.ru/virtualko/newapibig/app/js/logger.js"
   },
@@ -28,94 +29,8 @@
   "global": "git+https://github.com/QiV/global.git#master",
   "dependencies": {
     "babel-cli": "*",
-    "babel-plugin-check-es2015-constants": "*",
-    "babel-plugin-transform-do-expressions": "*",
-    "babel-plugin-transform-es2015-arrow-functions": "*",
-    "babel-plugin-transform-es2015-block-scoped-functions": "*",
-    "babel-plugin-transform-es2015-block-scoping": "*",
-    "babel-plugin-transform-es2015-classes": "*",
-    "babel-plugin-transform-es2015-computed-properties": "*",
-    "babel-plugin-transform-es2015-destructuring": "*",
-    "babel-plugin-transform-es2015-for-of": "*",
-    "babel-plugin-transform-es2015-function-name": "*",
-    "babel-plugin-transform-es2015-literals": "*",
-    "babel-plugin-transform-es2015-modules-commonjs": "*",
-    "babel-plugin-transform-es2015-object-super": "*",
-    "babel-plugin-transform-es2015-parameters": "*",
-    "babel-plugin-transform-es2015-shorthand-properties": "*",
-    "babel-plugin-transform-es2015-spread": "*",
-    "babel-plugin-transform-es2015-sticky-regex": "*",
-    "babel-plugin-transform-es2015-template-literals": "*",
-    "babel-plugin-transform-es2015-typeof-symbol": "*",
-    "babel-plugin-transform-es2015-unicode-regex": "*",
-    "babel-plugin-transform-function-bind": "*",
-    "babel-plugin-transform-regenerator": "*",
+    "babel-preset-normal-please": "*",
     "uglify-js": "*"
-  },
-  "trash": {
-    "transform-runtime": "",
-    "babel-plugin-transform-runtime": "*"
-  },
-  "babel": {
-    "plugins": [
-      "check-es2015-constants",
-      "transform-do-expressions",
-      "transform-function-bind",
-      "transform-regenerator",
-      "transform-es2015-arrow-functions",
-      "transform-es2015-block-scoped-functions",
-      "transform-es2015-block-scoping",
-      "transform-es2015-sticky-regex",
-      "transform-es2015-unicode-regex",
-      "transform-es2015-object-super",
-      "transform-es2015-parameters",
-      "transform-es2015-shorthand-properties",
-      "transform-es2015-function-name",
-      "transform-es2015-literals",
-      [
-        "transform-es2015-classes",
-        {
-          "loose": true
-        }
-      ],
-      [
-        "transform-es2015-computed-properties",
-        {
-          "loose": true
-        }
-      ],
-      [
-        "transform-es2015-destructuring",
-        {
-          "loose": true
-        }
-      ],
-      [
-        "transform-es2015-for-of",
-        {
-          "loose": true
-        }
-      ],
-      [
-        "transform-es2015-modules-commonjs",
-        {
-          "strict": false,
-          "loose": true
-        }
-      ],
-      [
-        "transform-es2015-spread",
-        {
-          "loose": true
-        }
-      ],
-      [
-        "transform-es2015-template-literals",
-        {
-          "loose": true
-        }
-      ]
-    ]
   },
   "gitHead": "2278feb8d679471efe82a767a50148c9f84ed30f",
   "readme": "ERROR: No README data found!",

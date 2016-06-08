@@ -481,7 +481,13 @@ function checkStyleSheets() {
         .filter(rule => rule.style && rule.style.length > 0)
         .some(rule => slice.call(rule.style).indexOf('orphans') !== -1)
       )
-      .forEach(sheet => (styleSheetDisabled = true, sheet.disabled = true));
+      .map(sheet => (
+        styleSheetDisabled = true,
+        sheet.disabled = true,
+        sheet.ownerNode
+      ))
+      .forEach(node => node.parentNode.removeChild(node))
+      ;
     if (styleSheetDisabled) {
       radar('adblock', 'styleSheetDisabled');
     }
