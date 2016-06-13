@@ -459,7 +459,8 @@ function checkShadowRoot() {
         }
         return [];
       })
-      .forEach(sheet => sheet.disabled = true);
+      .map(sheet => (sheet.disabled = true, sheet.ownerNode))
+      .forEach(node => node.parentNode.removeChild(node))
     if (shadowFound) {
       intervals.push('shadowFound');
     }
