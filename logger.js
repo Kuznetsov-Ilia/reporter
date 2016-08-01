@@ -1,7 +1,7 @@
 exports.__esModule = true;
 exports.default = _logger;
 
-var _global = require('global');
+var _global = require('my-global');
 
 var _global2 = _interopRequireDefault(_global);
 

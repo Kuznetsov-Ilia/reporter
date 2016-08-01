@@ -1,4 +1,4 @@
-import window from 'global';
+import window from 'my-global';
 var api = {stillLoading: 1};
 if (window.performance && window.performance.timing) {
   var TIMING = window.performance.timing;

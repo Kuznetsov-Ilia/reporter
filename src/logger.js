@@ -1,4 +1,4 @@
-import window from 'global';
+import window from 'my-global';
 const now = Date.now === undefined ? () => Number(new Date()) : Date.now;
 export default function _logger() {
   this.log = [];
