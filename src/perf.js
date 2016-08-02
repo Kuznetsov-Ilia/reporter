@@ -2,7 +2,7 @@
 
 //https://gist.github.com/RubaXa/8662836#file-performance-js
 // allow running in Node.js environment
-import window from 'my-global';
+import {window} from 'my-global';
 
 var _PERF = window.performance || {};
 

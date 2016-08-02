@@ -1,16 +1,12 @@
-var _global = require('my-global');
-
-var _global2 = _interopRequireDefault(_global);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _myGlobal = require('my-global');
 
 var api = { stillLoading: 1 };
-if (_global2.default.performance && _global2.default.performance.timing) {
-  var TIMING = _global2.default.performance.timing;
+if (_myGlobal.window.performance && _myGlobal.window.performance.timing) {
+  var TIMING = _myGlobal.window.performance.timing;
   // All times are relative times to the start time within the
   // same objects
   var firstPaint = 0;
-  var CHROME = _global2.default.chrome;
+  var CHROME = _myGlobal.window.chrome;
 
   if (TIMING.loadEventEnd - TIMING.navigationStart < 0) {
     //Page is still loading - please try again when page is loaded

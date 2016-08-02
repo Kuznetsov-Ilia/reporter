@@ -1,10 +1,6 @@
-var _global = require("my-global");
+var _myGlobal = require("my-global");
 
-var _global2 = _interopRequireDefault(_global);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var _PERF = _global2.default.performance || {};
+var _PERF = _myGlobal.window.performance || {};
 
 // We need to keep a global reference to the _PERF object to
 // prevent any added properties from being garbage-collected in Safari 8.
@@ -13,7 +9,7 @@ var _PERF = _global2.default.performance || {};
 
 //https://gist.github.com/RubaXa/8662836#file-performance-js
 // allow running in Node.js environment
-_global2.default._perfRefForUserTimingPolyfill = _PERF;
+_myGlobal.window._perfRefForUserTimingPolyfill = _PERF;
 
 //
 // Note what we shimmed

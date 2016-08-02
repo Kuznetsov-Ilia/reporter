@@ -1,11 +1,7 @@
 exports.__esModule = true;
 exports.default = _logger;
 
-var _global = require('my-global');
-
-var _global2 = _interopRequireDefault(_global);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _myGlobal = require('my-global');
 
 var now = Date.now === undefined ? function () {
   return Number(new Date());
@@ -14,7 +10,7 @@ function _logger() {
   var _this = this;
 
   this.log = [];
-  _global2.default.on('log:show', function () {
+  _myGlobal.window.on('log:show', function () {
     return _this.show();
   });
 }
@@ -27,9 +23,9 @@ _logger.prototype.set = function (group, name, data) {
     try {
       d = JSON.stringify(data, null, ' ');
     } catch (e) {
-      _global2.default.radar('debug', 'JSONstringify', {
+      _myGlobal.window.radar('debug', 'JSONstringify', {
         stringify: JSON.stringify({
-          ht: now() - _global2.default.HEAD_TIME,
+          ht: now() - _myGlobal.window.HEAD_TIME,
           keys: Object.keys(data),
           e: String(e)
         })
@@ -47,7 +43,7 @@ _logger.prototype.show = function () {
   var strUrl = '/debugger.html';
   var winName = 'debugger' + Math.random();
   var logs = this.log;
-  var wdegugger = _global2.default.open(strUrl, winName);
+  var wdegugger = _myGlobal.window.open(strUrl, winName);
   setTimeout(sendLogs, 300);
   function sendLogs() {
     if (wdegugger) {

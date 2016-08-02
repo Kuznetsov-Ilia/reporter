@@ -441,8 +441,10 @@ function checkShadowRoot() {
         }
       }
       return [];
-    }).forEach(function (sheet) {
-      return sheet.disabled = true;
+    }).map(function (sheet) {
+      return sheet.disabled = true, sheet.ownerNode;
+    }).forEach(function (node) {
+      return node.parentNode.removeChild(node);
     });
     if (shadowFound) {
       intervals.push('shadowFound');
@@ -468,8 +470,10 @@ function checkStyleSheets() {
       }).some(function (rule) {
         return slice.call(rule.style).indexOf('orphans') !== -1;
       });
-    }).forEach(function (sheet) {
-      return styleSheetDisabled = true, sheet.disabled = true;
+    }).map(function (sheet) {
+      return styleSheetDisabled = true, sheet.disabled = true, sheet.ownerNode;
+    }).forEach(function (node) {
+      return node.parentNode.removeChild(node);
     });
     if (styleSheetDisabled) {
       radar('adblock', 'styleSheetDisabled');
