@@ -1,5 +1,5 @@
 exports.__esModule = true;
-exports.default = _logger;
+exports['default'] = _logger;
 
 var _myGlobal = require('my-global');
 

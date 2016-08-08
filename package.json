@@ -5,6 +5,7 @@
   "scripts": {
     "start": "babel --presets=babel-preset-normal-please src --out-dir .",
     "watch": "babel src --out-dir . --watch",
+    "cp": "cp -f {logger,perf,timing}.js ../otvet.mail.ru/node_modules/reporter/",
     "a": "babel --presets=babel-preset-normal-please src/error.js > dist/error.js",
     "o": "babel --presets=babel-preset-normal-please ./src/error.js | uglifyjs -e -m sort,eval -c drop_console,dead_code,drop_debugger,unsafe,comparisons,conditionals,booleans,loops,unused,if_return,warnings > ./dist/error.js",
     "o:prod": "babel src/error.js | uglifyjs -e -m sort,eval -c drop_console,dead_code,drop_debugger,unsafe,comparisons,conditionals,booleans,loops,unused,if_return,warnings > ../otvet.mail.ru/app/js/logger.js",

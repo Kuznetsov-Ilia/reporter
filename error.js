@@ -1,6 +1,6 @@
 var release_id = window.RELEASE_ID;
-var url = window.radarURL || 'otvet';
-var project = window.radarPROJECT || '//otvet.radar.imgsmail.ru/update';
+var url = window.radarURL;
+var project = window.radarPROJECT;
 var now = Date.now === undefined ? function () {
   return Number(new Date());
 } : Date.now;
@@ -482,26 +482,3 @@ function checkStyleSheets() {
     radar('adblock', 'error', { adstylesheet: String(e) });
   }
 }
-
-/*
-grep 'polyfills.min.js' otvet-error.log
-
-grep 'window.TemporaryTokenList' -v
-grep -v 'parent'
-grep -v 'selectionDirection'
-grep -v 'dispatchEvent'
-grep -v 'console'
-grep -v 'at Object.stringify (native)'
-grep -v 'Performance'
-
-grep -v 'Error loading script'
-grep -v 'filename is undefined'
-grep -v "Cannot call method 'match' of undefined"
-grep -v 'The mark'
-grep -v "Cannot read property 'match' of undefined"
-grep -v 'illegal character'
-grep -v 'extension'
-grep -v 'localStorage'
-grep -v 'Object.defineProperty called on non-object'
-
-*/
