@@ -5,6 +5,7 @@
   "scripts": {
     "start": "babel --presets=babel-preset-normal-please src --out-dir .",
     "watch": "babel src --out-dir . --watch",
+    
     "cp": "cp -f {logger,perf,timing}.js ../otvet.mail.ru/node_modules/reporter/",
     "a": "babel --presets=babel-preset-normal-please src/error.js > dist/error.js",
     "o": "babel --presets=babel-preset-normal-please ./src/error.js | uglifyjs -e -m sort,eval -c drop_console,dead_code,drop_debugger,unsafe,comparisons,conditionals,booleans,loops,unused,if_return,warnings > ./dist/error.js",
@@ -12,7 +13,8 @@
     "o:dev": "babel src/error.js | uglifyjs -e -m sort,eval -c drop_console,dead_code,drop_debugger,unsafe,comparisons,conditionals,booleans,loops,unused,if_return,warnings > /Users/ikuznecov/projects/otvet.mail.ru/virtualko/newapibig/app/js/logger.js"
   },
   "a": " --out-file new.js > ",
-  "main": "src/index.js",
+  "main": "logger/index.js",
+  "jsnext:main": "logger/src.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/QiV/reporter.git"
